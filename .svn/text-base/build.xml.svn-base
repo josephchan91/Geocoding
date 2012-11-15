@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="HW2" default="war" basedir=".">
+  <!-- Arguments to gwtc and devmode targets -->
+  <property name="gwt.args" value="" />
+
+  <!-- Configure path to GWT SDK -->
+  <property name="gwt.sdk" location="/usr/share/gwt-2.4.0" />
+
+  <path id="project.class.path">
+    <pathelement location="war/WEB-INF/classes"/>
+    <pathelement location="${gwt.sdk}/gwt-user.jar"/>
+    <pathelement location="lib/hadoop-core-1.0.3.jar"/>
+    <fileset dir="${gwt.sdk}" includes="gwt-dev*.jar"/>
+    <!-- Add any additional non-server libs (such as JUnit) -->
+    <fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
+  </path>
+
+  <target name="javac" description="Compile java source to bytecode">
+    <mkdir dir="classes"/>
+    <javac srcdir="src" includes="**" encoding="utf-8" destdir="classes" nowarn="true"
+        debug="true" debuglevel="lines,vars,source" includeantruntime="false">
+      <classpath refid="project.class.path"/>
+    </javac>
+  </target>
+
+  <target name="war" depends="javac" description="Create a war file">
+    <zip destfile="HW2.war" basedir="classes"/>
+  </target>
+
+  <target name="vis-javac" description="Compile java source to bytecode">
+    <mkdir dir="war/WEB-INF/classes"/>
+    <javac srcdir="src" includes="**" encoding="utf-8"
+        destdir="war/WEB-INF/classes"
+        source="1.5" target="1.5" nowarn="true"
+        debug="true" debuglevel="lines,vars,source" includeantruntime="false">
+      <classpath refid="project.class.path"/>
+    </javac>
+    <copy todir="war/WEB-INF/classes">
+      <fileset dir="src" excludes="**/*.java"/>
+    </copy>
+  </target>
+
+  <target name="vis" depends="vis-javac" description="Run development mode">
+    <java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode">
+      <classpath>
+        <pathelement location="src"/>
+        <path refid="project.class.path"/>
+        <pathelement location="${gwt.sdk}/validation-api-1.0.0.GA.jar" />
+        <pathelement location="${gwt.sdk}/validation-api-1.0.0.GA-sources.jar" />
+      </classpath>
+      <jvmarg value="-Xmx256M"/>
+      <arg value="-startupUrl"/>
+      <arg value="Mkse_212_hw2_webapp.html"/>
+      <arg line="-war"/>
+      <arg value="war"/>
+      <!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
+      <arg line="${gwt.args}"/>
+      <arg value="edu.upenn.mkse212.hw2.web.Mkse_212_hw2_webapp"/>
+    </java>
+  </target>
+
+  <target name="pack" description="Create an archive for submission">
+    <zip destfile="submit-hw2.zip">
+      <zipfileset dir="." includes="**/*.java"/>
+      <zipfileset dir="." includes="**/results.txt"/>
+      <zipfileset dir="." includes="build.xml,README,.project,.classpath"/>
+      <zipfileset dir="." includes="**/*.jar" excludes="**/hadoop-core-1.0.3.jar"/>
+    </zip>
+  </target>
+
+  <target name="clean" description="Cleans this project">
+    <delete includeemptydirs="true" failonerror="false">
+      <fileset dir="classes"/>
+      <fileset dir="." includes="HW2.war"/>
+      <fileset dir="." includes="submit-hw*.zip"/>
+    </delete>
+    <delete dir="war/mkse_212_hw2_webapp" failonerror="false" />
+  </target>
+
+  <target name="maintainer-clean" description="Removes all generated files" depends="clean">
+    <delete dir="gwt-unitCache" failonerror="false" />
+    <delete dir="war/WEB-INF/deploy" failonerror="false" />
+  </target>
+
+</project>

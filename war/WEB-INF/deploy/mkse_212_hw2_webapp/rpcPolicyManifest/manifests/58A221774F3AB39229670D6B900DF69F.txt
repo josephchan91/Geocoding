@@ -1,0 +1,2 @@
+serviceClass: edu.upenn.mkse212.hw2.web.client.ImageService
+path: 5151CFFD1C51F50CEE3F6F22EBEBCAB9.gwt.rpc

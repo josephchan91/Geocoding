@@ -1,0 +1,6 @@
+K 13
+svn:externals
+V 61
+lib svn://ds01.seas.upenn.edu:10212/MKSE212-F12/jars/HW2-web
+
+END
